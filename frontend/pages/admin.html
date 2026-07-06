@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sally — Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+</head>
+<body class="d-flex">
+
+    <div class="sidebar d-flex flex-column">
+        <div class="logo"><i class="bi bi-hospital me-2"></i>Sally</div>
+        <a href="#" onclick="mostraSezione('dashboard')" class="active">
+            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+        </a>
+        <a href="#" onclick="mostraSezione('utenti')">
+            <i class="bi bi-people me-2"></i>Utenti
+        </a>
+        <a href="#" onclick="mostraSezione('percorsi')">
+            <i class="bi bi-diagram-3 me-2"></i>Percorsi
+        </a>
+        <div class="mt-auto">
+            <a href="#" onclick="logout()">
+                <i class="bi bi-box-arrow-left me-2"></i>Esci
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content w-100">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0" id="titolo-sezione">Dashboard</h4>
+            <span class="text-muted small" id="nome-utente"></span>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="sezione-dashboard">
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="card stat-card p-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-primary bg-opacity-10 rounded p-3">
+                                <i class="bi bi-activity fs-4 text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small">Percorsi attivi</div>
+                                <div class="fw-bold fs-4" id="stat-percorsi">—</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card p-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-warning bg-opacity-10 rounded p-3">
+                                <i class="bi bi-file-earmark-text fs-4 text-warning"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small">Referti in attesa</div>
+                                <div class="fw-bold fs-4" id="stat-referti">—</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card p-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-success bg-opacity-10 rounded p-3">
+                                <i class="bi bi-person-check fs-4 text-success"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small">Totale pazienti</div>
+                                <div class="fw-bold fs-4" id="stat-pazienti">—</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-4">
+                <h6 class="fw-bold mb-3">Percorsi attivi per specializzazione</h6>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Specializzazione</th>
+                            <th>Percorsi attivi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabella-specializzazioni"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Utenti -->
+        <div id="sezione-utenti" class="d-none">
+            <div class="card p-4 mb-4">
+                <h6 class="fw-bold mb-3">Crea nuovo utente</h6>
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <input type="text" id="nuovo-nome" class="form-control" placeholder="Nome">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" id="nuovo-cognome" class="form-control" placeholder="Cognome">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="email" id="nuovo-email" class="form-control" placeholder="Email">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="password" id="nuovo-password" class="form-control" placeholder="Password">
+                    </div>
+                    <div class="col-md-3">
+                        <select id="nuovo-ruolo" class="form-select" onchange="mostraCampiExtra()">
+                            <option value="">Seleziona ruolo</option>
+                            <option value="paziente">Paziente</option>
+                            <option value="medico">Medico</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div id="campi-paziente" class="col-12 d-none">
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <input type="text" id="codice-fiscale" class="form-control" placeholder="Codice Fiscale">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="date" id="data-nascita" class="form-control">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" id="telefono" class="form-control" placeholder="Telefono">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="campi-medico" class="col-12 d-none">
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <input type="text" id="specializzazione" class="form-control" placeholder="Specializzazione">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" id="numero-albo" class="form-control" placeholder="Numero Albo">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <button onclick="creaUtente()" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-1"></i>Crea utente
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-4">
+                <h6 class="fw-bold mb-3">Lista utenti</h6>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Ruolo</th>
+                            <th>Creato il</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabella-utenti"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Percorsi -->
+        <div id="sezione-percorsi" class="d-none">
+            <div class="card p-4 mb-4">
+                <h6 class="fw-bold mb-3">Assegna percorso a paziente</h6>
+                <div class="row g-2">
+                    <div class="col-md-4">
+                        <select id="sel-paziente" class="form-select">
+                            <option value="">Seleziona paziente</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="sel-percorso" class="form-select">
+                            <option value="">Seleziona percorso</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="sel-medico" class="form-select">
+                            <option value="">Seleziona medico</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <button onclick="assegnaPercorso()" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-1"></i>Assegna percorso
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-4">
+                <h6 class="fw-bold mb-3">Percorsi attivi</h6>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Paziente</th>
+                            <th>Percorso</th>
+                            <th>Medico</th>
+                            <th>Tappa</th>
+                            <th>Stato</th>
+                            <th>Avviato il</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabella-percorsi"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>

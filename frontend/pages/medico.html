@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sally — Medico</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+</head>
+<body class="d-flex">
+
+    <div class="sidebar d-flex flex-column">
+        <div class="logo"><i class="bi bi-hospital me-2"></i>Sally</div>
+        <a href="#" onclick="mostraSezione('pazienti')" class="active">
+            <i class="bi bi-people me-2"></i>I miei pazienti
+        </a>
+        <a href="#" onclick="mostraSezione('prenotazioni')">
+            <i class="bi bi-calendar-check me-2"></i>Prenotazioni
+        </a>
+        <a href="#" onclick="mostraSezione('referti')">
+            <i class="bi bi-file-earmark-text me-2"></i>Referti
+        </a>
+        <a href="#" onclick="mostraSezione('messaggi')">
+            <i class="bi bi-chat-dots me-2"></i>Messaggi
+        </a>
+        <div class="mt-auto">
+            <a href="#" onclick="logout()">
+                <i class="bi bi-box-arrow-left me-2"></i>Esci
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content w-100">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0" id="titolo-sezione">I miei pazienti</h4>
+            <span class="text-muted small" id="nome-utente"></span>
+        </div>
+
+        <!-- Pazienti -->
+        <div id="sezione-pazienti">
+            <div class="card p-4">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Paziente</th>
+                            <th>Percorso</th>
+                            <th>Tappa corrente</th>
+                            <th>Stato</th>
+                            <th>Avviato il</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabella-pazienti"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Prenotazioni -->
+        <div id="sezione-prenotazioni" class="d-none">
+            <div class="card p-4 mb-4">
+                <h6 class="fw-bold mb-3">Nuova prenotazione</h6>
+                <div class="row g-2">
+                    <div class="col-md-4">
+                        <select id="sel-percorso-pren" class="form-select">
+                            <option value="">Seleziona percorso paziente</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="sel-tappa-pren" class="form-select">
+                            <option value="">Seleziona tappa</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="datetime-local" id="data-pren" class="form-control">
+                    </div>
+                    <div class="col-12">
+                        <button onclick="creaPrenotazione()" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-1"></i>Crea prenotazione
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-4">
+                <h6 class="fw-bold mb-3">Prenotazioni esistenti</h6>
+                <div class="mb-3">
+                    <select id="filtro-percorso-pren" class="form-select w-auto" onchange="caricaPrenotazioni()">
+                        <option value="">Seleziona percorso per vedere le prenotazioni</option>
+                    </select>
+                </div>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Tappa</th>
+                            <th>Data e ora</th>
+                            <th>Medico</th>
+                            <th>Stato</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabella-prenotazioni"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Referti -->
+        <div id="sezione-referti" class="d-none">
+            <div class="card p-4 mb-4">
+                <h6 class="fw-bold mb-3">Carica nuovo referto</h6>
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <select id="sel-prenotazione-ref" class="form-select">
+                            <option value="">Seleziona prenotazione completata</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <textarea id="contenuto-referto" class="form-control" rows="4"
+                            placeholder="Inserisci il contenuto del referto..."></textarea>
+                    </div>
+                    <div class="col-12">
+                        <button onclick="caricaReferto()" class="btn btn-primary">
+                            <i class="bi bi-upload me-1"></i>Carica referto
+                        </button>
+                        <button onclick="avanzaTappa()" class="btn btn-success ms-2">
+                            <i class="bi bi-arrow-right-circle me-1"></i>Avanza tappa percorso
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messaggi -->
+        <div id="sezione-messaggi" class="d-none">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="card p-3">
+                        <h6 class="fw-bold mb-3">Percorsi</h6>
+                        <div id="lista-percorsi-msg"></div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card p-3 d-flex flex-column" style="min-height: 500px;">
+                        <h6 class="fw-bold mb-3" id="titolo-chat">Seleziona un percorso</h6>
+                        <div id="area-messaggi" class="flex-grow-1 overflow-auto mb-3"
+                            style="max-height: 380px; background: #f8f9fa; border-radius: 8px; padding: 1rem;">
+                        </div>
+                        <div class="d-flex gap-2" id="form-messaggio" style="display:none!important">
+                            <input type="text" id="testo-messaggio" class="form-control"
+                                placeholder="Scrivi un messaggio...">
+                            <button onclick="inviaMessaggio()" class="btn btn-primary">
+                                <i class="bi bi-send"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/medico.js"></script>
+</body>
+</html>

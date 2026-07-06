@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sally — Paziente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+</head>
+<body class="d-flex">
+
+    <div class="sidebar d-flex flex-column">
+        <div class="logo"><i class="bi bi-hospital me-2"></i>Sally</div>
+        <a href="#" onclick="mostraSezione('percorso')" class="active">
+            <i class="bi bi-diagram-3 me-2"></i>Il mio percorso
+        </a>
+        <a href="#" onclick="mostraSezione('referti')">
+            <i class="bi bi-file-earmark-text me-2"></i>I miei referti
+        </a>
+        <a href="#" onclick="mostraSezione('messaggi')">
+            <i class="bi bi-chat-dots me-2"></i>Messaggi
+        </a>
+        <div class="mt-auto">
+            <a href="#" onclick="logout()">
+                <i class="bi bi-box-arrow-left me-2"></i>Esci
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content w-100">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0" id="titolo-sezione">Il mio percorso</h4>
+            <span class="text-muted small" id="nome-utente"></span>
+        </div>
+
+        <!-- Percorso -->
+        <div id="sezione-percorso">
+            <div id="nessun-percorso" class="alert alert-info d-none">
+                Nessun percorso terapeutico assegnato. Contatta la clinica.
+            </div>
+            <div id="card-percorso" class="d-none">
+                <div class="card p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="fw-bold" id="nome-percorso"></h5>
+                            <p class="text-muted mb-1" id="specializzazione-percorso"></p>
+                            <p class="text-muted small" id="medico-percorso"></p>
+                        </div>
+                        <span class="badge fs-6" id="stato-percorso"></span>
+                    </div>
+                </div>
+
+                <div class="card p-4">
+                    <h6 class="fw-bold mb-3">Tappe del percorso</h6>
+                    <div id="lista-tappe"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Referti -->
+        <div id="sezione-referti" class="d-none">
+            <div id="lista-referti"></div>
+        </div>
+
+        <!-- Messaggi -->
+        <div id="sezione-messaggi" class="d-none">
+            <div class="card p-3 d-flex flex-column" style="min-height: 500px;">
+                <h6 class="fw-bold mb-3">Chat con il medico</h6>
+                <div id="area-messaggi" class="flex-grow-1 overflow-auto mb-3"
+                    style="max-height: 380px; background: #f8f9fa; border-radius: 8px; padding: 1rem;">
+                </div>
+                <div class="d-flex gap-2">
+                    <input type="text" id="testo-messaggio" class="form-control"
+                        placeholder="Scrivi un messaggio...">
+                    <button onclick="inviaMessaggio()" class="btn btn-primary">
+                        <i class="bi bi-send"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/paziente.js"></script>
+</body>
+</html>

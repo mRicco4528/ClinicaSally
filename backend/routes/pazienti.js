@@ -57,4 +57,27 @@ router.get('/:id', verificaToken, (req, res) => {
     });
 });
 
+router.get('/medici/lista', verificaToken, verificaRuolo('admin'), (req, res) => {
+    db.all(`
+        SELECT m.id, u.nome, u.cognome, m.specializzazione
+        FROM medici m
+        JOIN utenti u ON m.utente_id = u.id
+    `, [], (err, rows) => {
+        if (err) return res.status(500).json({ errore: err.message });
+        res.json(rows);
+    });
+});
+
+router.get('/medico-by-utente/:utenteId', verificaToken, (req, res) => {
+    db.get(
+        'SELECT id FROM medici WHERE utente_id = ?',
+        [req.params.utenteId],
+        (err, row) => {
+            if (err) return res.status(500).json({ errore: err.message });
+            if (!row) return res.status(404).json({ errore: 'Medico non trovato' });
+            res.json(row);
+        }
+    );
+});
+
 module.exports = router;
