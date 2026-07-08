@@ -4,9 +4,9 @@ const options = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'Sally API — Clinica Meridiem',
+            title: 'Sally API',
             version: '1.0.0',
-            description: 'Documentazione API per il sistema di gestione dei percorsi terapeutici della Clinica Meridiem',
+            description: 'Documentazione API per il sistema di gestione dei percorsi terapeutici della Clinica Sally',
         },
         servers: [
             {
