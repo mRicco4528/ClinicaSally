@@ -12,6 +12,9 @@ const { verificaToken, verificaRuolo } = require('../middleware/auth');
  *     security:
  *       - bearerAuth: []
  */
+// Restituisce il referto associato alla prenotazione indicata; l'eventuale assenza
+// del documento viene segnalata con errore 404, che il frontend interpreta come
+// referto non ancora disponibile.
 router.get('/:prenotazioneId', verificaToken, (req, res) => {
     db.get(`
         SELECT r.id, r.contenuto, r.data_rilascio, r.stato,
@@ -39,6 +42,9 @@ router.get('/:prenotazioneId', verificaToken, (req, res) => {
  *     security:
  *       - bearerAuth: []
  */
+// Registra il referto redatto dal medico e aggiorna la prenotazione allo stato
+// "completata"; il vincolo di unicità sulla prenotazione impedisce di refertare
+// due volte la medesima prestazione.
 router.post('/', verificaToken, verificaRuolo('medico'), (req, res) => {
     const { prenotazione_id, medico_id, contenuto } = req.body;
 

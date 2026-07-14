@@ -1,3 +1,7 @@
+// Gestisce l'accesso: convalida i campi del modulo, invia le credenziali al server
+// e, se accettate, salva token e dati utente in localStorage, reindirizzando poi
+// l'utente alla pagina corrispondente al proprio ruolo; in caso di rifiuto espone
+// un messaggio di errore.
 const login = async () => {
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value.trim();
@@ -28,6 +32,7 @@ const login = async () => {
     }
 };
 
+// Consente di avviare l'accesso anche mediante la pressione del tasto Invio.
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') login();
 });

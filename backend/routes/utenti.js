@@ -16,6 +16,8 @@ const { verificaToken, verificaRuolo } = require('../middleware/auth');
  *       200:
  *         description: Lista utenti
  */
+// Restituisce l'elenco degli utenti registrati, escludendo per riservatezza l'hash
+// della password; l'accesso è riservato al ruolo amministrativo.
 router.get('/', verificaToken, verificaRuolo('admin'), (req, res) => {
     db.all('SELECT id, nome, cognome, email, ruolo, created_at FROM utenti', [], (err, rows) => {
         if (err) return res.status(500).json({ errore: err.message });
@@ -32,6 +34,9 @@ router.get('/', verificaToken, verificaRuolo('admin'), (req, res) => {
  *     security:
  *       - bearerAuth: []
  */
+// Crea un nuovo utente cifrando la password con bcrypt; in funzione del ruolo
+// indicato inserisce anche il record di dettaglio nella tabella dei pazienti o dei
+// medici, collegato tramite chiave esterna all'anagrafica appena creata.
 router.post('/', verificaToken, verificaRuolo('admin'), async (req, res) => {
     const { nome, cognome, email, password, ruolo, codice_fiscale, data_nascita, telefono, specializzazione, numero_albo } = req.body;
 
@@ -87,6 +92,8 @@ router.post('/', verificaToken, verificaRuolo('admin'), async (req, res) => {
  *     security:
  *       - bearerAuth: []
  */
+// Elimina l'utente indicato dal parametro di percorso; qualora nessuna riga venga
+// interessata dall'operazione, l'identificativo è inesistente e viene restituito 404.
 router.delete('/:id', verificaToken, verificaRuolo('admin'), (req, res) => {
     db.run('DELETE FROM utenti WHERE id = ?', [req.params.id], function (err) {
         if (err) return res.status(500).json({ errore: err.message });

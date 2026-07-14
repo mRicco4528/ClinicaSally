@@ -1,6 +1,9 @@
 const bcrypt = require('bcryptjs');
 const db = require('./db');
 
+// Popola la base di dati con tre utenti dimostrativi, uno per ciascun ruolo previsto
+// dal sistema, memorizzando le password esclusivamente in forma cifrata tramite bcrypt.
+// La clausola INSERT OR IGNORE rende lo script rieseguibile senza generare duplicati.
 const seed = async () => {
     console.log('Avvio seed dati iniziali...');
 

@@ -1,13 +1,22 @@
 const API_URL = 'http://localhost:3000/api';
 
+// Recupera il token JWT salvato nel browser al momento del login.
 const getToken = () => localStorage.getItem('token');
+
+// Recupera i dati dell'utente autenticato memorizzati in localStorage.
 const getUtente = () => JSON.parse(localStorage.getItem('utente'));
 
+// Costruisce le intestazioni comuni a tutte le richieste protette, allegando il
+// token JWT secondo lo schema Bearer previsto dal backend.
 const headers = () => ({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${getToken()}`
 });
 
+// Oggetto che raccoglie tutte le chiamate verso le API del backend, così da
+// separare la logica delle pagine dai dettagli delle richieste HTTP: ogni funzione
+// incapsula indirizzo, verbo e intestazioni della rispettiva rotta e restituisce
+// la Promise prodotta da Axios.
 const api = {
     // Auth
     login: (email, password) =>

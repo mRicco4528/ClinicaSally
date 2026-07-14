@@ -12,6 +12,8 @@ const { verificaToken } = require('../middleware/auth');
  *     security:
  *       - bearerAuth: []
  */
+// Restituisce il catalogo completo dei percorsi terapeutici offerti dalla clinica,
+// consultabile da qualunque utente autenticato indipendentemente dal ruolo.
 router.get('/', verificaToken, (req, res) => {
     db.all('SELECT * FROM percorsi_terapeutici', [], (err, rows) => {
         if (err) return res.status(500).json({ errore: err.message });
@@ -28,6 +30,8 @@ router.get('/', verificaToken, (req, res) => {
  *     security:
  *       - bearerAuth: []
  */
+// Restituisce le tappe che compongono il percorso indicato, ordinate secondo la
+// sequenza prevista dal protocollo terapeutico.
 router.get('/:id/tappe', verificaToken, (req, res) => {
     db.all(
         'SELECT * FROM tappe WHERE percorso_id = ? ORDER BY ordine',

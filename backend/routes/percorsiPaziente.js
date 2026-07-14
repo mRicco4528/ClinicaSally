@@ -12,6 +12,9 @@ const { verificaToken, verificaRuolo } = require('../middleware/auth');
  *     security:
  *       - bearerAuth: []
  */
+// Restituisce l'elenco dei percorsi assegnati ai pazienti; la giunzione fra più
+// tabelle consente di esporre in un'unica risposta i nominativi di paziente e
+// medico e la denominazione del percorso terapeutico.
 router.get('/', verificaToken, verificaRuolo('admin', 'medico'), (req, res) => {
     db.all(`
         SELECT pp.id, pp.stato, pp.tappa_corrente, pp.data_avvio,
@@ -39,6 +42,8 @@ router.get('/', verificaToken, verificaRuolo('admin', 'medico'), (req, res) => {
  *     security:
  *       - bearerAuth: []
  */
+// Restituisce il dettaglio del singolo percorso assegnato, comprensivo dello stato
+// di avanzamento e dei nominativi di paziente e medico referente.
 router.get('/:id', verificaToken, (req, res) => {
     db.get(`
         SELECT pp.*, pt.nome AS percorso, pt.specializzazione,
@@ -67,6 +72,9 @@ router.get('/:id', verificaToken, (req, res) => {
  *     security:
  *       - bearerAuth: []
  */
+// Assegna un percorso terapeutico a un paziente designando il medico referente;
+// l'operazione è riservata al ruolo amministrativo e gli attributi di stato assumono
+// i valori predefiniti stabiliti dallo schema della base di dati.
 router.post('/', verificaToken, verificaRuolo('admin'), (req, res) => {
     const { paziente_id, percorso_id, medico_id } = req.body;
 
@@ -93,6 +101,9 @@ router.post('/', verificaToken, verificaRuolo('admin'), (req, res) => {
  *     security:
  *       - bearerAuth: []
  */
+// Fa progredire il percorso alla tappa successiva confrontando la tappa corrente con
+// il numero totale di tappe previste; qualora l'ultima risulti già raggiunta, lo stato
+// passa a "completato" e viene registrata la data di conclusione.
 router.patch('/:id/avanza', verificaToken, verificaRuolo('medico'), (req, res) => {
     db.get('SELECT * FROM percorsi_paziente WHERE id = ?', [req.params.id], (err, pp) => {
         if (err) return res.status(500).json({ errore: err.message });

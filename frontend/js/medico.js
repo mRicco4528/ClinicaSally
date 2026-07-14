@@ -5,6 +5,8 @@ document.getElementById('nome-utente').textContent = `${utente.nome} ${utente.co
 let percorsiAttivi = [];
 let percorsoSelezionatoId = null;
 
+// Ricava dal backend l'identificativo del medico associato all'utente autenticato,
+// valore distinto dall'id utente del token e necessario per creare prenotazioni e referti.
 const inizializza = async () => {
     try {
         const res = await api.getMedicoByUtente(utente.id);
@@ -14,6 +16,9 @@ const inizializza = async () => {
     }
 };
 
+// Gestisce la navigazione interna del pannello: nasconde tutte le sezioni, rende
+// visibile quella selezionata, aggiorna il titolo e la voce di menù attiva e
+// infine ne carica i dati dal backend.
 const mostraSezione = (sezione) => {
     ['pazienti', 'prenotazioni', 'referti', 'messaggi'].forEach(s => {
         document.getElementById(`sezione-${s}`).classList.add('d-none');
@@ -37,11 +42,15 @@ const mostraSezione = (sezione) => {
     if (sezione === 'messaggi') caricaSezioneMessaggi();
 };
 
+// Termina la sessione di lavoro svuotando la memoria locale del browser e
+// riportando l'utente alla pagina di accesso.
 const logout = () => {
     localStorage.clear();
     window.location.href = '../index.html';
 };
 
+// Popola la tabella dei percorsi assegnati al medico, corredando ciascuna riga del
+// pulsante che consente di far avanzare il paziente alla tappa successiva.
 const caricaPazienti = async () => {
     try {
         const res = await api.getPercorsiPaziente();
@@ -66,6 +75,8 @@ const caricaPazienti = async () => {
     }
 };
 
+// Fa progredire il percorso indicato alla tappa successiva previa conferma,
+// mostrando l'esito comunicato dal server e aggiornando la tabella dei pazienti.
 const avanzaTappaId = async (id) => {
     if (!confirm('Vuoi avanzare alla tappa successiva?')) return;
     try {
@@ -77,6 +88,9 @@ const avanzaTappaId = async (id) => {
     }
 };
 
+// Prepara la sezione delle prenotazioni popolando i menù con i percorsi assegnati;
+// alla selezione di un percorso vengono caricate dinamicamente le tappe del relativo
+// protocollo, secondo il meccanismo dei menù a selezione dipendente.
 const caricaSezionePrenotazioni = async () => {
     try {
         const res = await api.getPercorsiPaziente();
@@ -104,6 +118,8 @@ const caricaSezionePrenotazioni = async () => {
     }
 };
 
+// Mostra in tabella le prenotazioni del percorso scelto nel menù di filtro,
+// evidenziandone lo stato con un distintivo colorato.
 const caricaPrenotazioni = async () => {
     const id = document.getElementById('filtro-percorso-pren').value;
     if (!id) return;
@@ -124,6 +140,8 @@ const caricaPrenotazioni = async () => {
     }
 };
 
+// Convalida i campi del modulo e invia al backend la nuova prenotazione,
+// associandola all'identificativo del medico autenticato.
 const creaPrenotazione = async () => {
     const percorso_paziente_id = document.getElementById('sel-percorso-pren').value;
     const tappa_id = document.getElementById('sel-tappa-pren').value;
@@ -148,6 +166,8 @@ const creaPrenotazione = async () => {
     }
 };
 
+// Raccoglie da tutti i percorsi assegnati le prenotazioni non ancora refertate e
+// ne popola il menù di selezione della sezione dedicata ai referti.
 const caricaSezioneReferti = async () => {
     try {
         const res = await api.getPercorsiPaziente();
@@ -168,6 +188,8 @@ const caricaSezioneReferti = async () => {
     }
 };
 
+// Invia al backend il referto redatto per la prenotazione selezionata; il server
+// provvede contestualmente a contrassegnare la prestazione come completata.
 const caricaReferto = async () => {
     const prenotazione_id = document.getElementById('sel-prenotazione-ref').value;
     const contenuto = document.getElementById('contenuto-referto').value;
@@ -187,6 +209,8 @@ const caricaReferto = async () => {
     }
 };
 
+// Costruisce l'elenco delle conversazioni disponibili, una per ciascun percorso
+// assegnato, ognuna apribile con un clic tramite la funzione apriChat.
 const caricaSezioneMessaggi = async () => {
     try {
         const res = await api.getPercorsiPaziente();
@@ -208,6 +232,8 @@ const caricaSezioneMessaggi = async () => {
 let percorsoChatId = null;
 let destinatarioId = null;
 
+// Apre la conversazione relativa al percorso scelto: memorizza il contesto,
+// aggiorna il titolo, rende visibile il modulo di invio e carica lo storico dei messaggi.
 const apriChat = async (percorsoId, nomePaziente) => {
     percorsoChatId = percorsoId;
     document.getElementById('titolo-chat').textContent = `Chat con ${nomePaziente}`;
@@ -215,6 +241,9 @@ const apriChat = async (percorsoId, nomePaziente) => {
     await aggiornaChat();
 };
 
+// Carica i messaggi della conversazione corrente e li rappresenta come fumetti
+// allineati in base al mittente, facendo poi scorrere l'area fino al messaggio
+// più recente.
 const aggiornaChat = async () => {
     if (!percorsoChatId) return;
     try {
@@ -238,6 +267,8 @@ const aggiornaChat = async () => {
     }
 };
 
+// Invia il messaggio digitato al paziente della conversazione aperta e aggiorna
+// la visualizzazione della chat.
 const inviaMessaggio = async () => {
     const contenuto = document.getElementById('testo-messaggio').value.trim();
     if (!contenuto || !percorsoChatId) return;

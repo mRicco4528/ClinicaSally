@@ -5,6 +5,9 @@ document.getElementById('nome-utente').textContent = `${utente.nome} ${utente.co
 let percorsoPazienteId = null;
 let medicoId = null;
 
+// Gestisce la navigazione interna del pannello: nasconde tutte le sezioni, rende
+// visibile quella selezionata, aggiorna il titolo e la voce di menù attiva e
+// infine ne carica i dati dal backend.
 const mostraSezione = (sezione) => {
     ['percorso', 'referti', 'messaggi'].forEach(s => {
         document.getElementById(`sezione-${s}`).classList.add('d-none');
@@ -25,11 +28,16 @@ const mostraSezione = (sezione) => {
     if (sezione === 'messaggi') caricaMessaggi();
 };
 
+// Termina la sessione di lavoro svuotando la memoria locale del browser e
+// riportando l'utente alla pagina di accesso.
 const logout = () => {
     localStorage.clear();
     window.location.href = '../index.html';
 };
 
+// Carica il percorso assegnato al paziente: se presente ne mostra i dati di sintesi
+// e la sequenza delle tappe, distinguendo visivamente quelle completate, quella in
+// corso e quelle future; in assenza di percorso espone un avviso informativo.
 const caricaPercorso = async () => {
     try {
         const res = await api.getPercorsiPaziente();
@@ -81,6 +89,9 @@ const caricaPercorso = async () => {
     }
 };
 
+// Per ogni prenotazione del percorso richiede al backend il relativo referto,
+// mostrandone il contenuto se disponibile oppure una scheda che ne segnala
+// l'assenza, così da distinguere le prestazioni refertate da quelle in attesa.
 const caricaReferti = async () => {
     if (!percorsoPazienteId) return;
     try {
@@ -125,6 +136,8 @@ const caricaReferti = async () => {
     }
 };
 
+// Carica la conversazione con il medico e la rappresenta come fumetti allineati
+// in base al mittente, facendo poi scorrere l'area fino al messaggio più recente.
 const caricaMessaggi = async () => {
     if (!percorsoPazienteId) return;
     try {
@@ -148,6 +161,8 @@ const caricaMessaggi = async () => {
     }
 };
 
+// Invia il messaggio digitato al medico referente e aggiorna la visualizzazione
+// della chat.
 const inviaMessaggio = async () => {
     const contenuto = document.getElementById('testo-messaggio').value.trim();
     if (!contenuto || !percorsoPazienteId) return;

@@ -12,6 +12,9 @@ const { verificaToken, verificaRuolo } = require('../middleware/auth');
  *     security:
  *       - bearerAuth: []
  */
+// Calcola tramite interrogazioni di aggregazione gli indicatori di sintesi destinati
+// alla dashboard amministrativa (percorsi attivi, referti in attesa, totale pazienti
+// e distribuzione per specializzazione) e li restituisce in un'unica risposta.
 router.get('/', verificaToken, verificaRuolo('admin'), (req, res) => {
     const risultati = {};
 

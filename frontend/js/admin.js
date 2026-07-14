@@ -2,6 +2,9 @@ const utente = getUtente();
 if (!utente || utente.ruolo !== 'admin') window.location.href = '../index.html';
 document.getElementById('nome-utente').textContent = `${utente.nome} ${utente.cognome}`;
 
+// Gestisce la navigazione interna del pannello: nasconde tutte le sezioni, rende
+// visibile quella selezionata, aggiorna il titolo e la voce di menù attiva e
+// infine ne carica i dati dal backend.
 const mostraSezione = (sezione) => {
     ['dashboard', 'utenti', 'percorsi'].forEach(s => {
         document.getElementById(`sezione-${s}`).classList.add('d-none');
@@ -19,11 +22,15 @@ const mostraSezione = (sezione) => {
     if (sezione === 'percorsi') caricaPercorsi();
 };
 
+// Termina la sessione di lavoro svuotando la memoria locale del browser e
+// riportando l'utente alla pagina di accesso.
 const logout = () => {
     localStorage.clear();
     window.location.href = '../index.html';
 };
 
+// Richiede al backend gli indicatori riepilogativi e li riversa nelle schede
+// statistiche e nella tabella della distribuzione dei percorsi per specializzazione.
 const caricaDashboard = async () => {
     try {
         const res = await api.getDashboard();
@@ -44,6 +51,8 @@ const caricaDashboard = async () => {
     }
 };
 
+// Popola la tabella degli utenti registrati, corredando ciascuna riga del pulsante
+// per l'eliminazione dell'account.
 const caricaUtenti = async () => {
     try {
         const res = await api.getUtenti();
@@ -66,12 +75,16 @@ const caricaUtenti = async () => {
     }
 };
 
+// Mostra o nasconde i campi aggiuntivi del modulo di creazione in funzione del
+// ruolo selezionato: dati anagrafici per il paziente, dati professionali per il medico.
 const mostraCampiExtra = () => {
     const ruolo = document.getElementById('nuovo-ruolo').value;
     document.getElementById('campi-paziente').classList.toggle('d-none', ruolo !== 'paziente');
     document.getElementById('campi-medico').classList.toggle('d-none', ruolo !== 'medico');
 };
 
+// Raccoglie i valori del modulo e li invia al backend per la creazione del nuovo
+// account; a esito positivo la tabella degli utenti viene ricaricata.
 const creaUtente = async () => {
     const dati = {
         nome: document.getElementById('nuovo-nome').value,
@@ -95,6 +108,8 @@ const creaUtente = async () => {
     }
 };
 
+// Elimina l'utente indicato previa conferma esplicita dell'operatore, trattandosi
+// di un'operazione irreversibile, e aggiorna di conseguenza la tabella.
 const eliminaUtente = async (id) => {
     if (!confirm('Sei sicuro di voler eliminare questo utente?')) return;
     try {
@@ -105,6 +120,9 @@ const eliminaUtente = async (id) => {
     }
 };
 
+// Prepara la sezione dei percorsi eseguendo in parallelo le richieste di pazienti,
+// percorsi, medici e assegnazioni esistenti, per poi popolare i menù di selezione
+// del modulo di assegnazione e la tabella riepilogativa.
 const caricaPercorsi = async () => {
     try {
         const [pazienti, percorsi, medici, percorsiAttivi] = await Promise.all([
@@ -142,6 +160,8 @@ const caricaPercorsi = async () => {
     }
 };
 
+// Verifica che paziente, percorso e medico siano stati selezionati e inoltra al
+// backend la richiesta di assegnazione, ricaricando poi la sezione.
 const assegnaPercorso = async () => {
     const paziente_id = document.getElementById('sel-paziente').value;
     const percorso_id = document.getElementById('sel-percorso').value;

@@ -12,6 +12,8 @@ const { verificaToken, verificaRuolo } = require('../middleware/auth');
  *     security:
  *       - bearerAuth: []
  */
+// Restituisce in ordine cronologico le prenotazioni del percorso indicato, corredate
+// della denominazione della tappa e del nominativo del medico erogante.
 router.get('/:percorsoPazienteId', verificaToken, (req, res) => {
     db.all(`
         SELECT pr.id, pr.data_ora, pr.stato,
@@ -38,6 +40,8 @@ router.get('/:percorsoPazienteId', verificaToken, (req, res) => {
  *     security:
  *       - bearerAuth: []
  */
+// Registra una nuova prenotazione per una tappa del percorso, associandola al medico
+// e alla data indicati; l'operazione è riservata al ruolo medico.
 router.post('/', verificaToken, verificaRuolo('medico'), (req, res) => {
     const { percorso_paziente_id, tappa_id, medico_id, data_ora } = req.body;
 
