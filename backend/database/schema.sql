@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS medici (
 -- Percorsi terapeutici (template fissi)
 CREATE TABLE IF NOT EXISTS percorsi_terapeutici (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT NOT NULL,
+    nome TEXT NOT NULL UNIQUE,
     specializzazione TEXT NOT NULL,
     descrizione TEXT
 );
@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS tappe (
     ordine INTEGER NOT NULL,
     nome TEXT NOT NULL,
     descrizione TEXT,
+    UNIQUE(percorso_id, ordine),
     FOREIGN KEY (percorso_id) REFERENCES percorsi_terapeutici(id)
 );
 
@@ -104,7 +105,7 @@ CREATE TABLE IF NOT EXISTS messaggi (
 );
 
 -- Dati iniziali: percorsi terapeutici fissi
-INSERT INTO percorsi_terapeutici (nome, specializzazione, descrizione) VALUES
+INSERT OR IGNORE INTO percorsi_terapeutici (nome, specializzazione, descrizione) VALUES
 ('Percorso Ginocchio', 'Ortopedia', 
  'Percorso per la gestione di patologie al ginocchio'),
 ('Controllo Cardiaco', 'Cardiologia', 
@@ -113,21 +114,21 @@ INSERT INTO percorsi_terapeutici (nome, specializzazione, descrizione) VALUES
  'Percorso dermatologico per controllo e diagnosi cutanea');
 
 -- Tappe Percorso Ginocchio
-INSERT INTO tappe (percorso_id, ordine, nome, descrizione) VALUES
+INSERT OR IGNORE INTO tappe (percorso_id, ordine, nome, descrizione) VALUES
 (1, 1, 'Visita ortopedica iniziale', 'Prima valutazione ortopedica'),
 (1, 2, 'Radiografia', 'Esame radiografico del ginocchio'),
 (1, 3, 'Fisioterapia', 'Sessioni di fisioterapia riabilitativa'),
 (1, 4, 'Visita di controllo', 'Valutazione finale del percorso');
 
 -- Tappe Controllo Cardiaco
-INSERT INTO tappe (percorso_id, ordine, nome, descrizione) VALUES
+INSERT OR IGNORE INTO tappe (percorso_id, ordine, nome, descrizione) VALUES
 (2, 1, 'Visita cardiologica iniziale', 'Prima valutazione cardiologica'),
 (2, 2, 'Elettrocardiogramma', 'Esame ECG standard'),
 (2, 3, 'Holter 24h', 'Monitoraggio cardiaco delle 24 ore'),
 (2, 4, 'Visita di controllo', 'Valutazione finale del percorso');
 
 -- Tappe Controllo Cute
-INSERT INTO tappe (percorso_id, ordine, nome, descrizione) VALUES
+INSERT OR IGNORE INTO tappe (percorso_id, ordine, nome, descrizione) VALUES
 (3, 1, 'Visita dermatologica iniziale', 'Prima valutazione dermatologica'),
 (3, 2, 'Dermoscopia', 'Esame dermoscopico delle lesioni'),
 (3, 3, 'Biopsia cutanea', 'Prelievo tissutale per analisi'),
