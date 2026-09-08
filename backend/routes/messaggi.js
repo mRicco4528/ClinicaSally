@@ -12,9 +12,8 @@ const { verificaToken } = require('../middleware/auth');
  *     security:
  *       - bearerAuth: []
  */
-// Restituisce in ordine cronologico i messaggi del percorso indicato e contrassegna
-// come letti quelli destinati all'utente richiedente, realizzando la consueta
-// semantica di presa visione dei sistemi di messaggistica.
+// Messaggi del percorso in ordine cronologico; quelli diretti al richiedente vengono
+// marcati come letti.
 router.get('/:percorsoPazienteId', verificaToken, (req, res) => {
     db.all(`
         SELECT msg.id, msg.contenuto, msg.inviato_at, msg.letto,
@@ -46,9 +45,7 @@ router.get('/:percorsoPazienteId', verificaToken, (req, res) => {
  *     security:
  *       - bearerAuth: []
  */
-// Registra un nuovo messaggio nella conversazione; l'identità del mittente viene
-// ricavata dal token JWT anziché dal corpo della richiesta, impedendone così la
-// falsificazione.
+// Registra un messaggio. Il mittente è preso dal token, non dal corpo della richiesta.
 router.post('/', verificaToken, (req, res) => {
     const { destinatario_id, percorso_paziente_id, contenuto } = req.body;
 

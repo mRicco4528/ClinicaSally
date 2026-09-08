@@ -60,7 +60,7 @@ cd backend
 npm install
 ```
 
-### 4. Avvia il server
+### 5. Avvia il server
 
 ```bash
 node server.js
@@ -88,7 +88,9 @@ http://localhost:3000/api-docs
 | Ruolo   | Email                        | Password  |
 |---------|------------------------------|-----------|
 | Admin   | admin@meridiem.it            | admin123  |
-| Medico  | dott.rossi@meridiem.it       | medico123 |
+| Medico Ortopedico  | dott.rossi@meridiem.it       | medico123 |
+| Medico Cardiologico | dott.verdi@meridiem.it       | medico456 |
+| Medico Cutaneo | dott.neri@meridiem.it        | medico789 |
 | Paziente| mario.bianchi@email.it       | paziente123|
 
 ---

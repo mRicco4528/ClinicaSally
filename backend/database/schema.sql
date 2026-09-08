@@ -86,6 +86,10 @@ CREATE TABLE IF NOT EXISTS referti (
     data_rilascio DATETIME DEFAULT CURRENT_TIMESTAMP,
     stato TEXT NOT NULL DEFAULT 'disponibile'
         CHECK(stato IN ('in_elaborazione', 'disponibile', 'archiviato')),
+    -- Fotografia della tappa a cui si trovava il paziente nell'istante in cui il
+    -- referto è stato redatto: il valore viene fissato al salvataggio e non segue
+    -- i successivi avanzamenti del percorso.
+    tappa_corrente_al_referto INTEGER,
     FOREIGN KEY (prenotazione_id) REFERENCES prenotazioni(id),
     FOREIGN KEY (medico_id) REFERENCES medici(id)
 );

@@ -61,49 +61,111 @@
 
         <!-- Prenotazioni -->
         <div id="sezione-prenotazioni" class="d-none">
+            <!-- L'inserimento procede per gradi: si cerca dapprima il paziente per
+                 nome, cognome o codice fiscale, lo si sceglie dall'elenco che ne
+                 risulta e solo allora compaiono percorso, tappa e data -->
             <div class="card p-4 mb-4">
                 <h6 class="fw-bold mb-3">Nuova prenotazione</h6>
-                <div class="row g-2">
-                    <div class="col-md-4">
-                        <select id="sel-percorso-pren" class="form-select">
-                            <option value="">Seleziona percorso paziente</option>
-                        </select>
+
+                <div id="passo-scelta-paziente">
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-3">
+                            <input type="text" id="pren-cerca-nome" class="form-control"
+                                placeholder="Nome" oninput="filtraPazientiPrenotazione()">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" id="pren-cerca-cognome" class="form-control"
+                                placeholder="Cognome" oninput="filtraPazientiPrenotazione()">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" id="pren-cerca-cf" class="form-control"
+                                placeholder="Codice fiscale" oninput="filtraPazientiPrenotazione()">
+                        </div>
+                        <div class="col-md-2">
+                            <button onclick="azzeraRicercaPaziente()" class="btn btn-outline-secondary w-100">
+                                <i class="bi bi-x-circle me-1"></i>Azzera
+                            </button>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <select id="sel-tappa-pren" class="form-select">
-                            <option value="">Seleziona tappa</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="datetime-local" id="data-pren" class="form-control">
-                    </div>
-                    <div class="col-12">
-                        <button onclick="creaPrenotazione()" class="btn btn-primary">
-                            <i class="bi bi-plus-circle me-1"></i>Crea prenotazione
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Paziente</th>
+                                <th>Codice fiscale</th>
+                                <th>Percorsi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-pazienti-pren"></tbody>
+                    </table>
+                </div>
+
+                <div id="passo-dati-prenotazione" class="d-none">
+                    <div class="d-flex justify-content-between align-items-center border rounded p-2 mb-3">
+                        <span id="paziente-scelto" class="fw-semibold"></span>
+                        <button onclick="azzeraSceltaPaziente()" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Cambia paziente
                         </button>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <select id="sel-percorso-pren" class="form-select">
+                                <option value="">Seleziona percorso</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="sel-tappa-pren" class="form-select">
+                                <option value="">Seleziona tappa</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="datetime-local" id="data-pren" class="form-control">
+                        </div>
+                        <div class="col-12">
+                            <button onclick="creaPrenotazione()" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-1"></i>Crea prenotazione
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <!-- L'elenco raccoglie i pazienti, uno per riga; le rispettive prenotazioni
+                 si consultano nella finestra che si apre selezionando la riga. I tre
+                 campi di ricerca restringono l'elenco via via che si digita,
+                 combinandosi fra loro e ignorando quelli lasciati vuoti -->
             <div class="card p-4">
                 <h6 class="fw-bold mb-3">Prenotazioni esistenti</h6>
-                <div class="mb-3">
-                    <select id="filtro-percorso-pren" class="form-select w-auto" onchange="caricaPrenotazioni()">
-                        <option value="">Seleziona percorso per vedere le prenotazioni</option>
-                    </select>
+                <div class="row g-2 mb-3">
+                    <div class="col-md-3">
+                        <input type="text" id="cerca-nome" class="form-control"
+                            placeholder="Nome" oninput="filtraPrenotazioni()">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" id="cerca-cognome" class="form-control"
+                            placeholder="Cognome" oninput="filtraPrenotazioni()">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" id="cerca-cf" class="form-control"
+                            placeholder="Codice fiscale" oninput="filtraPrenotazioni()">
+                    </div>
+                    <div class="col-md-2">
+                        <button onclick="azzeraRicerca()" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-x-circle me-1"></i>Azzera
+                        </button>
+                    </div>
                 </div>
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Tappa</th>
-                            <th>Data e ora</th>
-                            <th>Medico</th>
-                            <th>Stato</th>
-                            <th></th>
+                            <th>Paziente</th>
+                            <th>Codice fiscale</th>
+                            <th>Percorsi</th>
+                            <th>Prenotazioni</th>
                         </tr>
                     </thead>
                     <tbody id="tabella-prenotazioni"></tbody>
                 </table>
+                <div class="text-muted small" id="conteggio-prenotazioni"></div>
             </div>
         </div>
 
@@ -114,22 +176,43 @@
                 <div class="row g-2">
                     <div class="col-md-6">
                         <select id="sel-prenotazione-ref" class="form-select">
-                            <option value="">Seleziona prenotazione completata</option>
+                            <option value="">Seleziona prenotazione da refertare</option>
                         </select>
                     </div>
                     <div class="col-12">
                         <textarea id="contenuto-referto" class="form-control" rows="4"
                             placeholder="Inserisci il contenuto del referto..."></textarea>
                     </div>
+                    <!-- L'avanzamento incorpora il salvataggio del referto: il documento
+                         viene registrato e solo in caso di esito positivo il percorso
+                         progredisce alla tappa seguente -->
                     <div class="col-12">
-                        <button onclick="caricaReferto()" class="btn btn-primary">
-                            <i class="bi bi-upload me-1"></i>Carica referto
-                        </button>
-                        <button onclick="avanzaTappa()" class="btn btn-success ms-2">
+                        <button onclick="avanzaTappa()" class="btn btn-success">
                             <i class="bi bi-arrow-right-circle me-1"></i>Avanza tappa percorso
+                        </button>
+                        <button onclick="completaPercorso()" class="btn btn-primary ms-2">
+                            <i class="bi bi-check2-circle me-1"></i>Completa percorso
                         </button>
                     </div>
                 </div>
+            </div>
+
+            <!-- Elenco dei pazienti in carico: ciascuna riga apre la finestra con i
+                 referti del relativo percorso -->
+            <div class="card p-4">
+                <h6 class="fw-bold mb-3">Pazienti</h6>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Paziente</th>
+                            <th>Percorso</th>
+                            <th>Tappa corrente</th>
+                            <th>Stato</th>
+                            <th>Referti</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabella-pazienti-referti"></tbody>
+                </table>
             </div>
         </div>
 
@@ -160,6 +243,24 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- Finestra di consultazione condivisa dalle sezioni Prenotazioni e Referti: il
+         contenuto le viene fornito di volta in volta dal modulo medico.js. Il clic
+         sullo sfondo la chiude, mentre quello sul riquadro interno viene arrestato
+         affinché non si propaghi allo sfondo stesso; si chiude anche col tasto Esc -->
+    <div id="modal-dettaglio" class="modal-sally d-none" onclick="chiudiModal()">
+        <div class="modal-sally-contenuto" onclick="event.stopPropagation()">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h6 class="fw-bold mb-0" id="titolo-modal"></h6>
+                    <div class="text-muted small" id="sottotitolo-modal"></div>
+                </div>
+                <button type="button" class="btn-close" aria-label="Chiudi"
+                    onclick="chiudiModal()"></button>
+            </div>
+            <div id="corpo-modal"></div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

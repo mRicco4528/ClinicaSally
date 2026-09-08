@@ -12,8 +12,7 @@ const { verificaToken, verificaRuolo } = require('../middleware/auth');
  *     security:
  *       - bearerAuth: []
  */
-// Restituisce l'elenco dei pazienti, unendo tramite giunzione i dati anagrafici
-// comuni della tabella utenti con quelli specifici della tabella pazienti.
+// Elenco dei pazienti, con i dati anagrafici presi da utenti.
 router.get('/', verificaToken, verificaRuolo('admin', 'medico'), (req, res) => {
     db.all(`
         SELECT p.id, u.nome, u.cognome, u.email, 
@@ -35,9 +34,7 @@ router.get('/', verificaToken, verificaRuolo('admin', 'medico'), (req, res) => {
  *     security:
  *       - bearerAuth: []
  */
-// Restituisce il dettaglio del singolo paziente; qualora il richiedente sia egli
-// stesso un paziente, viene verificato che i dati richiesti siano effettivamente
-// i propri, a tutela della riservatezza delle informazioni sanitarie altrui.
+// Dettaglio di un paziente. Un paziente può leggere solo la propria scheda.
 router.get('/:id', verificaToken, (req, res) => {
     const { id } = req.params;
 
@@ -62,8 +59,7 @@ router.get('/:id', verificaToken, (req, res) => {
     });
 });
 
-// Restituisce l'elenco dei medici con la relativa specializzazione, impiegato
-// dall'amministratore per la scelta del referente in fase di assegnazione dei percorsi.
+// Elenco dei medici, usato dall'admin per scegliere il referente di un percorso.
 router.get('/medici/lista', verificaToken, verificaRuolo('admin'), (req, res) => {
     db.all(`
         SELECT m.id, u.nome, u.cognome, m.specializzazione
@@ -75,8 +71,8 @@ router.get('/medici/lista', verificaToken, verificaRuolo('admin'), (req, res) =>
     });
 });
 
-// Ricava l'identificativo del medico a partire da quello dell'utente contenuto nel
-// token JWT, valore necessario al frontend per creare prenotazioni e referti.
+// Ricava l'id del medico dall'id utente del token: serve al frontend per creare
+// prenotazioni e referti.
 router.get('/medico-by-utente/:utenteId', verificaToken, (req, res) => {
     db.get(
         'SELECT id FROM medici WHERE utente_id = ?',

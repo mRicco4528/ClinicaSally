@@ -51,14 +51,20 @@ const api = {
         axios.post(`${API_URL}/percorsi-paziente`, dati, { headers: headers() }),
     avanzaTappa: (id) =>
         axios.patch(`${API_URL}/percorsi-paziente/${id}/avanza`, {}, { headers: headers() }),
+    completaPercorso: (id) =>
+        axios.patch(`${API_URL}/percorsi-paziente/${id}/completa`, {}, { headers: headers() }),
 
     // Prenotazioni
+    getTuttePrenotazioni: () =>
+        axios.get(`${API_URL}/prenotazioni`, { headers: headers() }),
     getPrenotazioni: (percorsoPazienteId) =>
         axios.get(`${API_URL}/prenotazioni/${percorsoPazienteId}`, { headers: headers() }),
     creaPrenotazione: (dati) =>
         axios.post(`${API_URL}/prenotazioni`, dati, { headers: headers() }),
 
     // Referti
+    getReferti: () =>
+        axios.get(`${API_URL}/referti`, { headers: headers() }),
     getReferto: (prenotazioneId) =>
         axios.get(`${API_URL}/referti/${prenotazioneId}`, { headers: headers() }),
     creaReferto: (dati) =>

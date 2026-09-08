@@ -29,9 +29,7 @@ const { JWT_SECRET } = require('../middleware/auth');
  *       401:
  *         description: Credenziali non valide
  */
-// Gestisce l'autenticazione dell'utente: verifica le credenziali confrontando la
-// password fornita con l'hash bcrypt memorizzato e, in caso di esito positivo,
-// rilascia un token JWT con validità di 24 ore insieme ai dati essenziali dell'utente.
+// Verifica le credenziali contro l'hash bcrypt e rilascia un token JWT valido 24 ore.
 router.post('/login', (req, res) => {
     const { email, password } = req.body;
 

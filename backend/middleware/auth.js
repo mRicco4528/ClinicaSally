@@ -37,4 +37,11 @@ const verificaRuolo = (...ruoli) => {
     };
 };
 
-module.exports = { verificaToken, verificaRuolo, JWT_SECRET };
+// Il medico vede i soli percorsi a lui assegnati, l'admin li vede tutti. Le due
+// funzioni forniscono la condizione SQL e il parametro corrispondente: il token
+// porta l'id dell'utente, da cui la sottoquery ricava quello del medico.
+const soloAssegnati = (req) => req.utente.ruolo === 'medico';
+
+const parametriMedico = (req) => (soloAssegnati(req) ? [req.utente.id] : []);
+
+module.exports = { verificaToken, verificaRuolo, soloAssegnati, parametriMedico, JWT_SECRET };

@@ -30,6 +30,22 @@ db.serialize(() => {
             }
         });
     });
+
+    // Adeguamenti successivi allo schema iniziale, necessari perché CREATE TABLE
+    // IF NOT EXISTS lascia intatte le tabelle già presenti e non ne aggiorna le
+    // colonne. SQLite non prevede una forma "ADD COLUMN IF NOT EXISTS", pertanto
+    // l'errore di colonna duplicata viene ignorato: ciò rende le istruzioni
+    // ripetibili a ogni avvio, sia su basi di dati nuove sia su quelle esistenti.
+    const migrazioni = [
+        'ALTER TABLE referti ADD COLUMN tappa_corrente_al_referto INTEGER'
+    ];
+    migrazioni.forEach(migrazione => {
+        db.run(migrazione, (err) => {
+            if (err && !err.message.includes('duplicate column name')) {
+                console.error('Errore migrazione:', err.message);
+            }
+        });
+    });
 });
 
 module.exports = db;
