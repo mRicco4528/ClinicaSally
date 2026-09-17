@@ -1,5 +1,3 @@
-# Clinica Sally
-
 # Sally — Sistema di Gestione Clinica
 
 Applicazione full-stack API-based per la gestione dei percorsi 
@@ -11,14 +9,14 @@ per le Aziende Digitali — Università Telematica Pegaso.
 
 ## Stack tecnologico
 
-| Layer         | Tecnologia              |
-|---------------|-------------------------|
-| Frontend      | HTML + CSS + JavaScript |
-| Chiamate API  | Axios                   |
-| Backend       | Node.js + Express       |
-| Database      | SQLite                  |
-| Autenticazione| JWT                     |
-| API Docs      | Swagger                 |
+| Layer          | Tecnologia                           |
+|----------------|--------------------------------------|
+| Frontend       | HTML + CSS + JavaScript, Bootstrap 5 |
+| Chiamate API   | Axios                                |
+| Backend        | Node.js + Express                    |
+| Database       | SQLite                               |
+| Autenticazione | JWT + bcrypt                         |
+| API Docs       | Swagger                              |
 
 ---
 
@@ -60,18 +58,20 @@ cd backend
 npm install
 ```
 
-### 5. Avvia il server
+### 4. Avvia il server
 
 ```bash
 node server.js
 ```
 
-Il server sarà attivo su: `http://localhost:3000`
+Al primo avvio viene creato il database, con le tabelle, i percorsi 
+terapeutici e gli utenti di prova.
 
-### 5. Apri il frontend
+### 5. Apri l'applicazione
 
-Apri il file `frontend/index.html` direttamente nel browser.
-Non è necessario un server aggiuntivo per il frontend.
+Il browser si apre da solo su `http://localhost:3000`, dove il server 
+espone sia il frontend sia le API. Se non si apre, digita l'indirizzo 
+a mano.
 
 ---
 
@@ -85,35 +85,49 @@ http://localhost:3000/api-docs
 
 ## Credenziali di test
 
-| Ruolo   | Email                        | Password  |
-|---------|------------------------------|-----------|
-| Admin   | admin@meridiem.it            | admin123  |
-| Medico Ortopedico  | dott.rossi@meridiem.it       | medico123 |
-| Medico Cardiologico | dott.verdi@meridiem.it       | medico456 |
-| Medico Cutaneo | dott.neri@meridiem.it        | medico789 |
-| Paziente| mario.bianchi@email.it       | paziente123|
+| Ruolo                | Email                  | Password    |
+|----------------------|------------------------|-------------|
+| Admin                | admin@meridiem.it      | admin123    |
+| Medico Ortopedico    | dott.rossi@meridiem.it | medico123   |
+| Medico Cardiologico  | dott.verdi@meridiem.it | medico456   |
+| Medico Dermatologico | dott.neri@meridiem.it  | medico789   |
+| Paziente             | mario.bianchi@email.it | paziente123 |
+| Paziente             | mario.verdi@email.it   | paziente456 |
 
 ---
 
 ## Struttura del progetto
+
+```text
 ClinicaSally/
 ├── backend/
-│   ├── server.js              # Punto di ingresso Express
+│   ├── server.js                              # Avvio di Express, seed e frontend
+│   ├── package.json                           # Dipendenze e script npm
 │   ├── database/
-│   │   ├── db.js              # Connessione SQLite
-│   │   └── schema.sql         # Script creazione tabelle
-│   ├── routes/                # Un file per ogni area API
+│   │   ├── db.js                              # Connessione SQLite e schema
+│   │   ├── schema.sql                         # Tabelle e percorsi predefiniti
+│   │   ├── seed.js                            # Inserisce gli utenti di prova
+│   │   └── sally.db                           # Database SQLite, creato se assente
 │   ├── middleware/
-│   │   └── auth.js            # Verifica JWT e ruoli
+│   │   └── auth.js                            # Verifica del token JWT e dei ruoli
+│   ├── routes/                                # Un file per ogni area delle API
+│   │   ├── auth.js · utenti.js · pazienti.js  # Accesso e anagrafiche
+│   │   ├── percorsi.js · percorsiPaziente.js  # Modelli e avanzamento dei percorsi
+│   │   ├── prenotazioni.js · referti.js       # Attività clinica
+│   │   └── messaggi.js · dashboard.js         # Chat e indicatori
 │   └── swagger/
-│       └── swagger.js         # Configurazione Swagger
+│       └── swagger.js                         # Configurazione di Swagger
 ├── frontend/
-│   ├── index.html             # Pagina di login
+│   ├── index.html                             # Pagina di login
 │   ├── css/
-│   ├── js/                    # Logica e chiamate Axios
-│   └── pages/                 # Pagine per ogni ruolo
-└── docs/
-└── Sally_API_Endpoints.xlsx
+│   │   └── style.css
+│   ├── js/                                    # Logica delle pagine
+│   │   ├── api.js                             # Tutte le chiamate Axios al backend
+│   │   └── login.js · admin.js · medico.js · paziente.js
+│   └── pages/                                 # Una pagina per ruolo
+│       └── admin.html · medico.html · paziente.html
+└── README.md
+```
 
 ---
 
