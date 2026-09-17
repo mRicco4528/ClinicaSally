@@ -1,7 +1,7 @@
 # Sally — Sistema di Gestione Clinica
 
 Applicazione full-stack API-based per la gestione dei percorsi 
-terapeutici della Clinica Sally.
+terapeutici della Clinica Meridiem.
 Sviluppata come Project Work per il corso L-31 Informatica 
 per le Aziende Digitali — Università Telematica Pegaso.
 
